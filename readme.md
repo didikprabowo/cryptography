@@ -8,7 +8,8 @@ go get -u github.com/didikprabowo/cryptography
 ```
 
 ## Algorithm
-1. [Cryptography Vigenere Cipher](#Cryptography-Vigenere)
+- Caesar Cipher(`cooming soon`)
+- [Cryptography Vigenere Cipher](#Cryptography-Vigenere)
 
 
 ### Cryptography Vigenere
