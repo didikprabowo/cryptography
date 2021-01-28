@@ -7,8 +7,8 @@ import (
 
 type (
 	VigereChiper interface {
-		Encode(string) string
-		Decode(string) string
+		Encode(string) (string, error)
+		Decode(string) (string, error)
 	}
 
 	CVC struct {
@@ -17,20 +17,33 @@ type (
 )
 
 // New for instance API reference
-func New(k string) VigereChiper {
-	return &CVC{
-		Key: k,
+func New(k string) (v VigereChiper, err error) {
+	cvc := &CVC{}
+	k, err = sanitize(k)
+	if err != nil {
+		return v, err
 	}
+	cvc.Key = k
+
+	return cvc, err
 }
 
 // Encode is func for encode
-func (c *CVC) Encode(s string) string {
-	return encrypt(s, c.Key)
+func (c *CVC) Encode(s string) (out string, err error) {
+	s, err = sanitize(s)
+	if err != nil {
+		return out, err
+	}
+	return encrypt(s, c.Key), err
 }
 
 // Decode is func for decode
-func (c *CVC) Decode(s string) string {
-	return decrypt(s, c.Key)
+func (c *CVC) Decode(s string) (out string, err error) {
+	s, err = sanitize(s)
+	if err != nil {
+		return out, err
+	}
+	return decrypt(s, c.Key), err
 }
 
 /*
@@ -96,6 +109,7 @@ func sanitize(msg string) (v string, err error) {
 
 	for _, v := range msg {
 		// v is type data rune, rune is ASCII
+
 		switch {
 		case v >= 65 && v <= 90:
 			// FOR ALPHABET A- Z
@@ -104,6 +118,7 @@ func sanitize(msg string) (v string, err error) {
 		case v >= 97 && v <= 122:
 			// ALPHABET a-z convert to A-Z
 			upper := toUpper(string(v))
+
 			plainText = append(plainText, rune(upper[0]))
 			continue
 		case v == 32:
